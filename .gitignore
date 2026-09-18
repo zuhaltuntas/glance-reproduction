@@ -1,0 +1,14 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Training outputs — reproducible, must not be tracked
+outputs/
+
+# Dataset — downloaded automatically on first run
+data/
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
