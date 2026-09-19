@@ -113,6 +113,7 @@ def load_task(
     split_idx: int = 0,
     device:torch.device | str = 'cpu',
     add_degree: bool = True,
+    standardize_degree: bool = True,
     root: str = C.DATA_DIR,
 ) -> GraphTask:
     """Load one WebKB graph.
@@ -144,7 +145,7 @@ def load_task(
         y=data.y.to(device),
         train_mask=data.train_mask[:,split_idx].to(device),
         val_mask=data.val_mask[:,split_idx].to(device),
-        test_mask=test_mask[:,split_idx].to(device),
+        test_mask=data.test_mask[:,split_idx].to(device),
         add_degree=add_degree,
         standardize_degree=standardize_degree
     )
