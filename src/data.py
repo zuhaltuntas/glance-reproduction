@@ -56,15 +56,15 @@ class GraphTask:
     	return self.edge_index.size(1) // 2
 
 
- def _node_degrees(edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
- 	"""Out-degree of every node. On an undirected graph this is the degree.
+def _node_degrees(edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
+    """Out-degree of every node. On an undirected graph this is the degree.
 
     Returns (N, 1) so it can be concatenated directly."""
 
-    degrees = torch.zeros(num_nodes, device=edge_index.device)			# (N,)
-    ones = torch.zeros(edge_index.size(1), device=edge_index.device) 	# (E,)
-    degrees.index_add_(0, edge_index[0], ones)							# (N,)
-    return degrees.unsqueeze(1) 										# (N,) -> (N, 1)
+    degrees = torch.zeros(num_nodes, device=edge_index.device)          # (N,)
+    ones = torch.ones(edge_index.size(1), device=edge_index.device)     # (E,)
+    degrees.index_add_(0, edge_index[0], ones)                          # (N,)
+    return degrees.unsqueeze(1)                                         # (N,) -> (N, 1)
 
 def augment_with_degree(
 	x: torch.Tensor,
@@ -85,7 +85,7 @@ def augment_with_degree(
     	# z-score standardization
     	std = degrees.std()
     	if std > 0:
-    		degrees = (degrees - degrees.mean()) / standardize_degree	# (N, 1)
+    		degrees = (degrees - degrees.mean()) / std                  # (N, 1)
 
     return torch.cat([x, degrees], dim=1)								# (N, F) -> (N, F+1)
 
