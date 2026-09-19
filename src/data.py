@@ -105,7 +105,7 @@ def to_glance_edge_index(
     returns    : (2, 2 * E_undirected)
     """
 
-    edge_index = remove_self_loops(edge_index)
+    edge_index, _ = remove_self_loops(edge_index)
     return to_undirected(edge_index, num_nodes=num_nodes)
 
 def load_task(
