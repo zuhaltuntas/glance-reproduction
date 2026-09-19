@@ -122,7 +122,7 @@ PREDICATE_TAU = 0.5          # assumption: tau in [11]'s Eq. 3
 LOGIC_LAYER_WIDTHS = (128, 64)   # assumption: [11] uses 4-8 equal-width layers
 RESIDUAL_INIT_LOGIT = 5.0    # [12] Sec. 3.2 and Fig. 11: z_3 = 5
 
-# WebKB ships 10 fixed 60/20/20 splits from Geom-GCN [10]. The paper reports
+# WebKB ships 10 fixed 48/32/20 splits from Geom-GCN [10]. The paper reports
 # 5 runs with "different random seeds" without naming the splits, so I pair
 # run i with split i.
 NUM_PROVIDED_SPLITS = 10
