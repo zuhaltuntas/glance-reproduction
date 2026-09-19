@@ -26,14 +26,14 @@ FIGURES_DIR = os.path.join(PROJECT_ROOT, 'figures')
 # ---------------------------------------------------------
 
 class DatasetName(Enum):
-	"""The three WebKB graphs used in the GLANCE paper (Table 1)."""
+    """The three WebKB graphs used in the GLANCE paper (Table 1)."""
 
-	CORNELL = 'Cornell'
-	TEXAS = 'Texas'
-	WISCONSIN = 'Wisconsin'
+    CORNELL = 'Cornell'
+    TEXAS = 'Texas'
+    WISCONSIN = 'Wisconsin'
 
 class ClusterSource(Enum):
-	"""Which representation KMeans is run on (Sec. 3.3, Algorithm 1 line 6).
+    """Which representation KMeans is run on (Sec. 3.3, Algorithm 1 line 6).
 
     INPUT_FEATURES
         Paper-faithful. Algorithm 1 clusters ``X'`` (the degree-augmented
@@ -89,7 +89,7 @@ class LogicLoss(Enum):
 
 EPOCHS = 300                 # Sec. 4.3: "trained for 300 epochs"
 LEARNING_RATE = 0.005        # Sec. 4.3: "initial learning rate of 0.005"
-NUM_RUNS = 5 				 # Sec. 4.3: "repeated five times"
+NUM_RUNS = 5                 # Sec. 4.3: "repeated five times"
 
 # --------------------------------------------------------------------------
 # Hyperparameters the paper does NOT state. Every value below is my choice;

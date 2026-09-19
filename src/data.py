@@ -39,21 +39,21 @@ class GraphTask:
 
     @property
     def num_nodes(self) -> int:
-    	return self.x.size(0)
-    
+        return self.x.size(0)
+
     @property
     def num_features(self) -> int:
-    	return self.x.size(1)
+        return self.x.size(1)
 
     @property
     def num_classes(self) -> int:
-    	return int(self.y.max().item()) + 1
+        return int(self.y.max().item()) + 1
 
     @property
     def num_edges(self) -> int:
-    	"""Undirected edge count: (2, E) stores each edge in both directions."""
+        """Undirected edge count: (2, E) stores each edge in both directions."""
 
-    	return self.edge_index.size(1) // 2
+        return self.edge_index.size(1) // 2
 
 
 def _node_degrees(edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
@@ -67,9 +67,9 @@ def _node_degrees(edge_index: torch.Tensor, num_nodes: int) -> torch.Tensor:
     return degrees.unsqueeze(1)                                         # (N,) -> (N, 1)
 
 def augment_with_degree(
-	x: torch.Tensor,
-	edge_index: torch.Tensor,
-	standardize: bool = True,
+    x: torch.Tensor,
+    edge_index: torch.Tensor,
+    standardize: bool = True,
 ) -> torch.Tensor:
     """Eq. (2): concatenate node degree onto the feature vector.
 
@@ -78,16 +78,16 @@ def augment_with_degree(
     reading of Eq. (2) is still reachable.
     """
 
-    degrees = _node_degrees(edge_index, x.size(0))						# (N, 1)
+    degrees = _node_degrees(edge_index, x.size(0))                      # (N, 1)
 
     if standardize:
-    	degrees = torch.log1p(degrees)									# (N, 1)
-    	# z-score standardization
-    	std = degrees.std()
-    	if std > 0:
-    		degrees = (degrees - degrees.mean()) / std                  # (N, 1)
+        degrees = torch.log1p(degrees)                                  # (N, 1)
+        # z-score standardization
+        std = degrees.std()
+        if std > 0:
+            degrees = (degrees - degrees.mean()) / std                  # (N, 1)
 
-    return torch.cat([x, degrees], dim=1)								# (N, F) -> (N, F+1)
+    return torch.cat([x, degrees], dim=1)                               # (N, F) -> (N, F+1)
 
 def to_glance_edge_index(
     edge_index: torch.Tensor,
