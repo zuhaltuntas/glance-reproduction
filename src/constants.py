@@ -15,11 +15,11 @@ SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.join(SRC_DIR, os.pardir)
 
 DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
-OUTPUTS_DIR = os.path.join(PROJECT_ROOT, 'output')
-CHECKPOINTS_DIR = os.path.join(PROJECT_ROOT, 'checkpoints')
-RUNS_DIR = os.path.join(PROJECT_ROOT, 'runs')
-DIAGNOSTICS_DIR = os.path.join(PROJECT_ROOT, 'diagnostics')
-FIGURES_DIR = os.path.join(PROJECT_ROOT, 'figures')
+OUTPUTS_DIR = os.path.join(PROJECT_ROOT, 'outputs')
+CHECKPOINTS_DIR = os.path.join(OUTPUTS_DIR, 'checkpoints')
+RUNS_DIR = os.path.join(OUTPUTS_DIR, 'runs')
+DIAGNOSTICS_DIR = os.path.join(OUTPUTS_DIR, 'diagnostics')
+FIGURES_DIR = os.path.join(OUTPUTS_DIR, 'figures')
 
 # ---------------------------------------------------------
 # Bounded choices -> enums
