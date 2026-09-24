@@ -89,7 +89,7 @@ def augment_with_degree(
 
     return torch.cat([x, degrees], dim=1)                               # (N, F) -> (N, F+1)
 
-def to_glance_edge_index(
+def to_paper_edge_index(
     edge_index: torch.Tensor,
     num_nodes: int
 ) -> torch.Tensor:
@@ -131,7 +131,7 @@ def load_task(
 
     data = WebKB(root=root, name=dataset.value)[0]
 
-    edge_index = to_glance_edge_index(data.edge_index, data.num_nodes)
+    edge_index = to_paper_edge_index(data.edge_index, data.num_nodes)
 
     x = data.x
     if add_degree:
@@ -149,3 +149,10 @@ def load_task(
         add_degree=add_degree,
         standardize_degree=standardize_degree
     )
+
+def majority_class_accuracy(task: GraphTask) -> float:
+    """Accuracy of always predicting the training set's most common class."""
+
+    train_labels = task.y[task.train_mask]                     # (N_train,)
+    majority = torch.bincount(train_labels).argmax()
+    return (task.y[task.test_mask] == majority).float().mean().item()
