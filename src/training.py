@@ -21,8 +21,8 @@ import torch
 import torch.nn as nn
 
 from src import constants as C
-from src.data import GraphTask, load_task
-from src.model.glance import GLANCE, GlanceConfig, build_model
+from src.data import GraphTask, load_task, majority_class_accuracy
+from src.models.glance import GLANCE, GlanceConfig, build_model
 
 # --------------------------------------------------------------------------
 # Reproducibility
@@ -66,30 +66,30 @@ class EarlyStopping:
         self.best_epoch = -1
         self.epochs_without_improvement = 0
 
-        def step(self, epoch: int, score: float, loss: float) -> bool:
-            """Returns True when this epoch is the new best."""
+    def step(self, epoch: int, score: float, loss: float) -> bool:
+        """Returns True when this epoch is the new best."""
 
-            improved = score > self.best_score + self.min_delta
-            tie_broken = (
-                abs(score - self.best_score) <= self.min_delta
-                and loss < self.best_loss
-            )
+        improved = score > self.best_score + self.min_delta
+        tie_broken = (
+            abs(score - self.best_score) <= self.min_delta
+            and loss < self.best_loss
+        )
 
-            if improved or tie_broken:
-                self.best_score = max(score, self.best_score)
-                self.best_loss = loss
-                self.best_epoch = epoch
-                self.epochs_without_improvement = 0
-                return True
+        if improved or tie_broken:
+            self.best_score = max(score, self.best_score)
+            self.best_loss = loss
+            self.best_epoch = epoch
+            self.epochs_without_improvement = 0
+            return True
 
-            self.epochs_without_improvement += 1
-             return False
+        self.epochs_without_improvement += 1
+        return False
 
-         @property
-         def should_stop(self) -> bool:
-            if self.patience <= 0:
-                return False
-            return self.epochs_without_improvement >= self.patience
+    @property
+    def should_stop(self) -> bool:
+        if self.patience <= 0:
+            return False
+        return self.epochs_without_improvement >= self.patience
 
 # --------------------------------------------------------------------------
 # Hyperparameters that are not architecture
@@ -114,6 +114,7 @@ class RunResult:
     val_accuracy: float
     train_accuracy: float
     test_accuracy: float
+    majority_baseline: float
     checkpoint_path: str | None = None
     history: list[dict] = field(default_factory=list)
 
@@ -157,9 +158,9 @@ def evaluate(
     criterion: nn.Module,
     training_config: TrainingConfig
 ) -> tuple[float, float]:
-     """Returns (accuracy, total loss) on one mask.
+    """Returns (accuracy, total loss) on one mask.
 
-    eval() disables dropout -- with p=0.5 on a 183-node graph, measuring with
+    eval() disables dropout -- with p=0.3 on a 183-node graph, measuring with
     it on would report a noisy, pessimistic number. no_grad() keeps the
     evaluation out of the autograd graph.
     """
@@ -180,8 +181,8 @@ def train_single_run(
     device: torch.device,
     seed: int,
     should_test: bool = False,
-    varbose: bool = True,
-    log every: int = 50
+    verbose: bool = True,
+    log_every: int = 50
 ) -> tuple[GLANCE, RunResult]:
     """Train one model on one split. Returns the best-validation model."""
 
@@ -218,6 +219,9 @@ def train_single_run(
 
         train_accuracy = accuracy(
             output.logits[task.train_mask].detach(), task.y[task.train_mask]
+        )
+        val_accuracy, val_loss = evaluate(
+            model, task, task.val_mask, criterion, training_config
         )
 
         history.append({
@@ -275,6 +279,7 @@ def train_single_run(
         val_accuracy=stopper.best_score,
         train_accuracy=final_train_accuracy,
         test_accuracy=test_accuracy,
+        majority_baseline=majority_class_accuracy(task),
         history=history,
     )
 
